@@ -27,6 +27,7 @@ private:
     QAction *viewst;
     QString dateString;
     DbManager* db;
+    void checkTime();
 
     friend class TrayIcon;
 };

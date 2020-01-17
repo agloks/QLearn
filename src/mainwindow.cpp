@@ -5,6 +5,7 @@
 #include <QStatusBar>
 #include <QDebug>
 #include <QListWidgetItem>
+#include <QSound>
 
 #include "header/mainwindow.h"
 #include "ui_mainwindow.h"
@@ -54,12 +55,25 @@ MainWindow::~MainWindow()
 void MainWindow::on_listWidget_itemPressed(QListWidgetItem *item)
 {
     ui->timeEdit->selectAll();
-    qDebug() << item->text();
+    QSound::play(":/bomb-action.wav");
+    this->checkTime();
 }
 
 void MainWindow::on_saveButton_itemPressed()
 {
-    db -> addDate(ui -> dateEdit -> text());
+    const QString text(ui -> dateEdit -> text() + ' ' + ui -> timeEdit -> text() + ' ' + ui -> lineEdit -> text());
+    db -> addDate(text);
     ui -> listWidget -> clear();
     ui -> listWidget -> addItems(db -> showAllDate());
+}
+
+void MainWindow::checkTime()
+{
+    QStringList allTimes = db->showAllDate();
+    //standard sort is enough to organize it as we wanna
+    allTimes.sort();
+
+    QString dateNow = QDate::currentDate().toString();
+    QString timeNow = QTime::currentTime().toString();
+    qDebug() << dateNow + ' ' + timeNow;
 }
