@@ -7,6 +7,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 class QListWidgetItem;
 class DbManager;
+class TrayIcon;
 QT_END_NAMESPACE
 
 
@@ -27,6 +28,7 @@ private:
     QAction *viewst;
     QString dateString;
     DbManager* db;
+    TrayIcon* tray;
     void checkTime();
 
     friend class TrayIcon;

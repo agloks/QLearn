@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     setWindowIcon(QIcon(":/images/stream.png"));
-    TrayIcon* tray = new TrayIcon(this);
+    tray = new TrayIcon(this);
 
     QAction *quit = new QAction("&Quit", this);
     quit -> setShortcut(tr("CTRL+Q"));
@@ -57,6 +57,7 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem *item)
     ui->timeEdit->selectAll();
     QSound::play(":/bomb-action.wav");
     this->checkTime();
+    tray->showBox();
 }
 
 void MainWindow::on_saveButton_itemPressed()

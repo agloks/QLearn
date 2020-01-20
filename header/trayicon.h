@@ -18,6 +18,7 @@ public:
     ~TrayIcon();
 
     QAction* newAction;
+    void showBox();
 
 public slots:
     void showThis(unsigned int reason);

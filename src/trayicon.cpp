@@ -1,6 +1,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDebug>
+#include <QMessageBox>
 
 #include "header/mainwindow.h"
 #include "header/trayicon.h"
@@ -36,6 +37,12 @@ void TrayIcon::showThis(unsigned int reason)
 void TrayIcon::hideThis()
 {
     MainWindow -> hide();
+}
+
+void TrayIcon::showBox()
+{
+    QMessageBox::information(nullptr , tr("Title Here"),
+                             tr("Now you must create the loop for call me, isn't your lazy?"));
 }
 
 TrayIcon::~TrayIcon()
