@@ -22,6 +22,7 @@ public:
 private slots:
     void on_listWidget_itemPressed(QListWidgetItem *item);
     void on_saveButton_itemPressed();
+    void checkTime();
 
 private:
     Ui::MainWindow *ui;
@@ -29,7 +30,8 @@ private:
     QString dateString;
     DbManager* db;
     TrayIcon* tray;
-    void checkTime();
+    QTimer *timer;
+    int timeSet;
 
     friend class TrayIcon;
 };

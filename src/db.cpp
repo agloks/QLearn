@@ -36,7 +36,7 @@ DbManager::DbManager(const QString& path)
       {
         qDebug() << "Creating table";
         QSqlQuery q;
-        q.prepare("create table time(id integer primary key, date text)");
+        q.prepare("create table time(id integer primary key, date varchar)");
         qDebug() << q.exec();
       }
    }

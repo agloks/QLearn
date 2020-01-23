@@ -39,10 +39,9 @@ void TrayIcon::hideThis()
     MainWindow -> hide();
 }
 
-void TrayIcon::showBox()
+void TrayIcon::showBox(QString &text)
 {
-    QMessageBox::information(nullptr , tr("Title Here"),
-                             tr("Now you must create the loop for call me, isn't your lazy?"));
+    QMessageBox::information(nullptr , tr("Task"), text);
 }
 
 TrayIcon::~TrayIcon()

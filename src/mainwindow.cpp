@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QListWidgetItem>
 #include <QSound>
+#include <QTimer>
 
 #include "header/mainwindow.h"
 #include "ui_mainwindow.h"
@@ -40,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listWidget->addItems(db -> showAllDate());
 
     qApp->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, QOverload<>::of(&MainWindow::checkTime));
+    timeSet = 2000;
+    timer -> start(timeSet);
 
     connect(quit, &QAction::triggered, qApp, &QApplication::quit);
     connect(tray, &QSystemTrayIcon::activated, tray, &TrayIcon::showThis);
@@ -57,7 +62,6 @@ void MainWindow::on_listWidget_itemPressed(QListWidgetItem *item)
     ui->timeEdit->selectAll();
     QSound::play(":/bomb-action.wav");
     this->checkTime();
-    tray->showBox();
 }
 
 void MainWindow::on_saveButton_itemPressed()
@@ -74,7 +78,11 @@ void MainWindow::checkTime()
     //standard sort is enough to organize it as we wanna
     allTimes.sort();
 
+    QString nextTask = allTimes[0];
     QString dateNow = QDate::currentDate().toString();
     QString timeNow = QTime::currentTime().toString();
-    qDebug() << dateNow + ' ' + timeNow;
+    QStringList now = (dateNow + ' ' + timeNow).split(" ");
+    qDebug() << "nextTask = " << nextTask << "now = " << now;
+    timeSet = 1200;
+    timer -> start(timeSet);
 }
