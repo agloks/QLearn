@@ -1,6 +1,7 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QDebug>
+#include <QSound>
 #include <QMessageBox>
 
 #include "header/mainwindow.h"
@@ -39,8 +40,10 @@ void TrayIcon::hideThis()
     MainWindow -> hide();
 }
 
-void TrayIcon::showBox(QString &text)
+void TrayIcon::showBox(QString &text, int& t)
 {
+    QSound::play(":/bomb-action.wav");
+    t = 1000 * 60; //one minute
     QMessageBox::information(nullptr , tr("Task"), text);
 }
 

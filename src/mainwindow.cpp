@@ -5,7 +5,6 @@
 #include <QStatusBar>
 #include <QDebug>
 #include <QListWidgetItem>
-#include <QSound>
 #include <QTimer>
 
 #include "header/mainwindow.h"
@@ -61,7 +60,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_listWidget_itemPressed(QListWidgetItem *item)
 {
     ui->timeEdit->selectAll();
-    QSound::play(":/bomb-action.wav");
     this->checkTime();
 }
 
@@ -97,6 +95,7 @@ bool MainWindow::assertTime(QString& timeSource, QString& timeDestin)
             int md = destin[1].toInt();
             int minutesRest = (ms > md) ? ms - md : md - ms;
 
+            qDebug() << "2 else time; s = " << source[1] << "and dd = " << destin[1];
             timeSet = 1000 * 60 * minutesRest;
         }
     }
@@ -106,6 +105,7 @@ bool MainWindow::assertTime(QString& timeSource, QString& timeDestin)
         int hd = destin[0].toInt();
         int hoursRest = (hs > hd) ? hs - hd : hd - hs;
 
+        qDebug() << "1 else time; s = " << source[0] << "and dd = " << destin[0];
         timeSet = 1000 * 60  * 60 * hoursRest;
     }
 
@@ -117,8 +117,8 @@ bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
     /*
         dateSource = "01/01/2000 00:00" -> ("01", "01", "2000", "00:00", "")  dateDestin = ("qui", "jan", "23", "2020", "10:57:40")
 
-        dateSource[0] = month  dateDestin[1] = month
-        dateSource[1] = day    dateDestin[2] = day
+        dateSource[1] = month  dateDestin[1] = month
+        dateSource[0] = day    dateDestin[2] = day
         dateSource[2] = year   dateDestin[3] = year
         dateSource[3] = time   dateDestin[4] = time
     */
@@ -139,20 +139,24 @@ bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
 
     if(source[2] == dateDestin[3])
     {
-        if(source[0] == months[dateDestin[1]])
+        if(source[1] == months[dateDestin[1]])
         {
-            if(source[1] == dateDestin[2])
+            if(source[0] == dateDestin[2])
             {
+                qDebug() << "3 else date; s = " << source[0] << "and dd = " << dateDestin[2];
                 return this -> assertTime(source[3], dateDestin[4]);
             }
         }
         else
         {
+            qDebug() << "2 else date; s = " << source[1] << "and dd = " << months[dateDestin[1]];
+
             timeSet = 1000 * 60 * 60 * 24; //one day
         }
     }
     else
     {
+        qDebug() << "1 else date; s = " << source[2] << "and dd = " << dateDestin[3];
         timeSet = 1000 * 60 * 60 * 24; //one day
     }
 
@@ -163,19 +167,20 @@ void MainWindow::checkTime()
 {
     QStringList allTimes = db->showAllDate();
     //standard sort is enough to organize it as we wanna
-    allTimes.sort();
-
-    QString nextTask = allTimes[0];
-    const QString dateNow = QDate::currentDate().toString();
-    const QString timeNow = QTime::currentTime().toString();
-    QStringList now = (dateNow + ' ' + timeNow).split(" ");
-
-    if(this -> assertDate(nextTask, now))
+//    allTimes.sort();
+    if(allTimes.size())
     {
-        QString msg("lupanalatica");
-        this -> tray -> showBox(msg);
-    }
+        QString nextTask = allTimes[0];
+        const QString dateNow = QDate::currentDate().toString();
+        const QString timeNow = QTime::currentTime().toString();
+        QStringList now = (dateNow + ' ' + timeNow).split(" ");
 
-    qDebug() << allTimes;
-    timer -> start(timeSet);
+        if(this -> assertDate(nextTask, now))
+        {
+            QString msg("lupanalatica");
+            this -> tray -> showBox(msg, timeSet);
+        }
+        qDebug() << timeSet;
+        timer -> start(timeSet);
+    }
 }
