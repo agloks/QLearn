@@ -33,6 +33,9 @@ private:
     QTimer *timer;
     int timeSet;
 
+    bool assertDate(QString&, QStringList&);
+    bool assertTime(QString&, QString&);
+
     friend class TrayIcon;
 };
 #endif // MAINWINDOW_H
