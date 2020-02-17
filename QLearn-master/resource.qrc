@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/stream.png</file>
+        <file>bomb-action.wav</file>
+    </qresource>
+</RCC>
