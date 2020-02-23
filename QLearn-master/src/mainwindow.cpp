@@ -170,7 +170,7 @@ bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
 void MainWindow::checkTime()
 {
     QStringList allTimes = db->showAllDate();
-    this->orderFull(allTimes);
+    this -> orderFull(allTimes);
     this -> setListToday(allTimes);
 
     if((*listToday).size())
