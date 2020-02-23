@@ -40,11 +40,11 @@ void TrayIcon::hideThis()
     MainWindow -> hide();
 }
 
-void TrayIcon::showBox(QString &text, int& t)
+void TrayIcon::showBox(QStringRef &text, int& t)
 {
     QSound::play(":/bomb-action.wav");
     t = 1000 * 60; //one minute
-    QMessageBox::information(nullptr , tr("Task"), text);
+    QMessageBox::information(nullptr , tr("Task"), QString(text.toLocal8Bit()));
 }
 
 TrayIcon::~TrayIcon()

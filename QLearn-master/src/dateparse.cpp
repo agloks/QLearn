@@ -4,14 +4,45 @@
 #include <QDate>
 #include <QTime>
 
+void DateParse::m_setMonthMap()
+{
+    months = new QMap<QString, QString>;
+
+    (*months)["jan."] = "01";
+    (*months)["fev."] = "02";
+    (*months)["mar."] = "03";
+    (*months)["abr."] = "04";
+    (*months)["mai."] = "05";
+    (*months)["jun."] = "06";
+    (*months)["jul."] = "07";
+    (*months)["ago."] = "08";
+    (*months)["set."] = "09";
+    (*months)["out."] = "10";
+    (*months)["nov."] = "11";
+    (*months)["dez."] = "12";
+    (*months)["jan"] = "01";
+    (*months)["feb"] = "02";
+    (*months)["mar"] = "03";
+    (*months)["apr"] = "04";
+    (*months)["may"] = "05";
+    (*months)["jun"] = "06";
+    (*months)["jul"] = "07";
+    (*months)["aug"] = "08";
+    (*months)["sep"] = "09";
+    (*months)["oct"] = "10";
+    (*months)["nov"] = "11";
+    (*months)["dec"] = "12";
+}
+
 DateParse::DateParse()
 {
-
+    this->m_setMonthMap();
 }
 
 DateParse::~DateParse()
 {
     delete listToday;
+    delete months;
 }
 
 std::unique_ptr<std::vector<QStringList>> toList(const QString &lhs, const QString &rhs, const char *sep)
@@ -48,21 +79,7 @@ void DateParse::adjustDateBr(QString& date)
 {
     QStringList arrDate = date.split(" ");
 
-    QMap<QString, QString> months;
-    months["jan"] = "01";
-    months["feb"] = "02";
-    months["mar"] = "03";
-    months["apr"] = "04";
-    months["may"] = "05";
-    months["jun"] = "06";
-    months["jul"] = "07";
-    months["aug"] = "08";
-    months["sep"] = "09";
-    months["oct"] = "10";
-    months["nov"] = "11";
-    months["dec"] = "12";
-
-    arrDate[1].replace(0, 3, months[arrDate[1]]);
+    arrDate[1].replace(0, arrDate[1].length(), (*months)[arrDate[1]]);
     date = QString("%1/%2/%3").arg(arrDate[3]).arg(arrDate[1]).arg(arrDate[2]);
 }
 
@@ -73,7 +90,6 @@ std::unique_ptr<T> getHourAndMinute(const T &args)
     return gtm;
 }
 
-
 template<typename T>
 std::unique_ptr<T> getHourAndMinute(const int &arg1, const int &arg2)
 {
@@ -83,6 +99,8 @@ std::unique_ptr<T> getHourAndMinute(const int &arg1, const int &arg2)
 
 void orderByTime(QStringList &sl)
 {
+    if(!sl.size())
+        return;
     /*
         sl => ("2020/02/19 23:00 moremore recent", "2020/02/19 20:00 more recent", "2020/02/19 13:00 less recent");
         expected in arrList =>  ("2020/02/19", "13", "00", "less", "recent")
@@ -90,12 +108,14 @@ void orderByTime(QStringList &sl)
     int timeNow = QTime::currentTime().msecsSinceStartOfDay();
     int idx = 0;
     ulong minFound = ULONG_MAX;
+    std::unique_ptr<QString> hour, minute;
+    std::unique_ptr<QTime> timeTemp;
 
     while(idx ++< sl.size())
     {
-        std::unique_ptr<QString> hour = getHourAndMinute<QString>(sl[idx - 1].split(" ")[1].split(":")[0]);
-        std::unique_ptr<QString> minute = getHourAndMinute<QString>(sl[idx - 1].split(" ")[1].split(":")[1]);
-        std::unique_ptr<QTime> timeTemp = getHourAndMinute<QTime>(hour->toInt(), minute->toInt());
+        hour = getHourAndMinute<QString>(sl[idx - 1].split(" ")[1].split(":")[0]);
+        minute = getHourAndMinute<QString>(sl[idx - 1].split(" ")[1].split(":")[1]);
+        timeTemp = getHourAndMinute<QTime>(hour->toInt(), minute->toInt());
         int timeInsert = timeTemp->msecsSinceStartOfDay();
 
         ulong diff = (timeInsert >= timeNow) ? timeInsert - timeNow : 32765;
@@ -105,6 +125,8 @@ void orderByTime(QStringList &sl)
             std::swap(sl[0], sl[idx - 1]);
             minFound = diff;
         };
+
+        hour.reset(); minute.reset(); timeTemp.reset();
     }
 
     std::stable_sort(sl.begin() + 1, sl.end(), [](const QString &lhs, const QString &rhs){
@@ -116,7 +138,6 @@ void orderByTime(QStringList &sl)
         return lhsInt > rhsInt;
     });
 }
-
 
 void DateParse::setListToday(const QStringList &sl)
 {

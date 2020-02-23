@@ -117,7 +117,7 @@ bool MainWindow::assertTime(QString& timeSource, QString& timeDestin)
 
 bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
 {
-    qDebug() << dateSource;
+
     /*
         dateSource = "2000/01/14 00:00" -> ("2000", "01", "14", "00:00", "")  dateDestin = ("qui", "jan", "23", "2020", "10:57:40")
 
@@ -127,23 +127,10 @@ bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
         dateSource[3] = time   dateDestin[4] = time
     */
     QStringList source = dateSource.split(QRegExp("/|\\s"));
-    QMap<QString, QString> months;
-    months["jan"] = "01";
-    months["feb"] = "02";
-    months["mar"] = "03";
-    months["apr"] = "04";
-    months["may"] = "05";
-    months["jun"] = "06";
-    months["jul"] = "07";
-    months["aug"] = "08";
-    months["sep"] = "09";
-    months["oct"] = "10";
-    months["nov"] = "11";
-    months["dec"] = "12";
 
     if(source[0] == dateDestin[3])
     {
-        if(source[1] == months[dateDestin[1]])
+        if(source[1] == (*months)[dateDestin[1]])
         {
             if(source[2] == dateDestin[2])
             {
@@ -153,7 +140,7 @@ bool MainWindow::assertDate(QString& dateSource, QStringList& dateDestin)
         }
         else
         {
-            qDebug() << "2 else date; s = " << source[1] << "and dd = " << months[dateDestin[1]];
+            qDebug() << "2 else date; s = " << source[1] << "and dd = " << (*months)[dateDestin[1]];
 
             timeSet = 1000 * 60 * 60 * 24; //one day
         }
@@ -182,10 +169,11 @@ void MainWindow::checkTime()
 
         if(this -> assertDate(nextTask, now))
         {
-            QString msg("lupanalatica");
+            QStringRef msg(&nextTask, 17, nextTask.size());
             this -> tray -> showBox(msg, timeSet);
         }
-        qDebug() << timeSet;
+
+        qDebug() << "nextTask = " << nextTask;
         timer -> start(timeSet);
     }
 }

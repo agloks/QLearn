@@ -3,6 +3,7 @@
 
 class QStringList;
 class QString;
+template <typename T1, typename T2> class QMap;
 
 class DateParse {
     protected:
@@ -10,11 +11,14 @@ class DateParse {
         ~DateParse();
 
         void virtual orderFull(QStringList &);
-        void virtual orderByTime();
+
         void virtual setListToday(const QStringList &);
         void virtual adjustDateBr(QString &);
-//        void orderByMonth();
+
         QStringList* listToday;
+        QMap<QString, QString>* months;
+    private:
+        void m_setMonthMap();
 };
 
 #endif // DATEPARSE_H
