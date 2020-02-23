@@ -10,6 +10,7 @@ class DateParse {
         ~DateParse();
 
         void virtual orderFull(QStringList &);
+        void virtual orderByTime();
         void virtual setListToday(const QStringList &);
         void virtual adjustDateBr(QString &);
 //        void orderByMonth();

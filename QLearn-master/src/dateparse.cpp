@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QDebug>
 #include <QDate>
+#include <QTime>
 
 DateParse::DateParse()
 {
@@ -65,10 +66,28 @@ void DateParse::adjustDateBr(QString& date)
     date = QString("%1/%2/%3").arg(arrDate[3]).arg(arrDate[1]).arg(arrDate[2]);
 }
 
+void DateParse::orderByTime()
+{
+    const auto timeNow = QTime::currentTime().msecsSinceStartOfDay();
+    QTime* timeOld = new QTime(16, 50, 0, 0);
+    int sizeListToday = listToday->size(), idx = 0;
+    QStringList splitedListArray;
+
+    while(sizeListToday--)
+    {
+        splitedListArray = listToday[idx];
+        qDebug() << "timeNow = " << timeNow
+                 << "timeOld = " << timeOld -> msecsSinceStartOfDay()
+                 << "splitedListArray = " << splitedListArray;
+        ++idx;
+    }
+}
+
 void DateParse::setListToday(const QStringList &sl)
 {
     listToday = new QStringList();
     QString dateToday = QDate::currentDate().toString().toLower();
+    qDebug() << dateToday;
     this -> adjustDateBr(dateToday);
 
     for(const QString daySl: sl)
@@ -76,11 +95,14 @@ void DateParse::setListToday(const QStringList &sl)
         std::unique_ptr<std::vector<QStringList>> arrList = toList(daySl, dateToday);
         int numberDaySl = ((*arrList)[0][0] + (*arrList)[0][1] + (*arrList)[0][2]).toInt();
         int numberDateToday = ((*arrList)[1][0] + (*arrList)[1][1] + (*arrList)[1][2]).toInt();
+//        qDebug() << "numberDaySl = " << numberDaySl;
+        qDebug() << "numberDayToday = " << (*arrList)[1];
         if(std::abs(numberDaySl - numberDateToday) == 0)
         {
             listToday->push_back(daySl);
         }
     }
 
-    qDebug() << *listToday;
+    this->orderByTime();
+    qDebug() << "in setListToday => \t" << *listToday;
 }
